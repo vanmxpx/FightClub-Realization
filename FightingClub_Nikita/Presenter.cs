@@ -13,8 +13,9 @@ namespace FightingClub_Nikita
 {
     public class Presenter
     {
+        // Интерфейсы позволяют вставить любую логику и любуое представление
+        // даже поменять их в процессе можно, если придется,от этого связи меджу ними не нарушатся
         private IFighting _process;
-    
         private readonly IGameMenuForm _menu;
 
         List<IPlayerView> _players = new List<IPlayerView>();
@@ -58,6 +59,7 @@ namespace FightingClub_Nikita
         }
         #endregion
 
+        // Раунд начнется тогда, когда оба игрока выберут часть тела
         private void ProcessRound(object sender, EventArgs e)
         {
             if(_players[0].SelectedPart != BodyParts.None 

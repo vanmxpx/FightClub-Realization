@@ -14,6 +14,8 @@ namespace GameProcess.BL
 
         public event EventHandler<MessageEventArgs> Message;
 
+        // Конструктор принимает два базовых игрока и не важно, какая у них реализация,
+        // для любых игроков раунды будут одинаковы - один бьет, один защищается, и на это никак не должно влиять, кто именно бьет
         public Logic(BasePlayer player1, BasePlayer player2)
         {
             Player1 = player1;
@@ -25,8 +27,13 @@ namespace GameProcess.BL
             Player1.RoundAction = RoundAction.Attack;
             Player2.RoundAction = RoundAction.Defend;
 
+            // Игроки получают событые, что их ударили.
+            // Такой способ максимально передает суть взаимодействия между игроками - они обращаются друг к другу
             Player1.Struck += Player2.GetHit;
             Player2.Struck += Player1.GetHit;
+
+            // По смерти одного процесс "награждает" другого. Это тоже процесс игры,
+            // если делать это во view, потеряется часть логики
             Player1.Death += Player2.Win;
             Player2.Death += Player1.Win;
 

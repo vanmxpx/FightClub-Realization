@@ -7,6 +7,8 @@ using GameProcess.BL.Fighters;
 
 namespace FightingClub_Nikita.PlayerItems
 {
+    // Этот контроллер не имеет никакой смысловой нагрузки, 
+    // просто что бы не загружать форму у него есть управляющий класс
     public class PlayerController: IPlayerView
     {
         public BodyParts SelectedPart { get; private set; } = BodyParts.None;
@@ -15,6 +17,10 @@ namespace FightingClub_Nikita.PlayerItems
         private BasePlayer _player;
         private PlayerForm _form;
         private bool _computer;
+
+        // Очень важная абстракция, каждая view получает игрока, 
+        // и в зависимости от того, кого она получила, она примет определенную форму.
+        // Это делает форму шаблонной, не дублирую код для каждого нового игрока
         public PlayerController(BasePlayer player, Bitmap fighterPic)
         {
             // Настройка игрока
@@ -22,6 +28,7 @@ namespace FightingClub_Nikita.PlayerItems
             this._player.Death += ViewDead;
             this._player.Winner += ViewWin;
 
+            // Если компьютер - будет всегда рандом
             _computer = player is CPUPlayer;
             if (_computer) SelectedPart = BodyParts.Random;
 

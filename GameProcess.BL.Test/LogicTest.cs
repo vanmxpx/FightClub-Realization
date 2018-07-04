@@ -1,8 +1,12 @@
-﻿using GameProcess.BL.Fighters;
+﻿using GameProcess.BL.Common.Args;
+using GameProcess.BL.Common.Constants;
+using GameProcess.BL.Fighters;
 using NUnit.Framework;
 
 namespace GameProcess.BL.Test
 {
+    // Хорошим знаком того, что логика выделена будет написание для нее тестов
+    // Они не все рабочие, не пугайтесь 
     [TestFixture]
     public class LogicTest
     {
@@ -11,7 +15,7 @@ namespace GameProcess.BL.Test
         [SetUp]
         public void Init()
         {
-            _logic = new Logic();
+            _logic = new Logic(new Player("Test"), new CPUPlayer());
         }
 
         [Test]
@@ -25,8 +29,8 @@ namespace GameProcess.BL.Test
         public void GenerateLogic_StepChanges()
         {
             int round = 3;
-            _logic.MakeStep(BodyParts._body);
-            _logic.MakeStep(BodyParts._body);
+            _logic.MakeStep(BodyParts.Body, BodyParts.Body);
+            _logic.MakeStep(BodyParts.Body, BodyParts.Body);
 
             Assert.AreEqual(_logic.Round, round);
         }
@@ -34,12 +38,12 @@ namespace GameProcess.BL.Test
         [Test]
         public void GenerateLogic_HPChanges()
         {
-            int hp = 50;
-            _logic.Player1.GetHit(BodyParts._body, 50);
-            _logic.Player2.GetHit(BodyParts._body, 50);
+            int hp = 100;
+            _logic.Player1.Hit(BodyParts.Leg);
+            _logic.Player2.Hit(BodyParts.Leg);
 
-            Assert.AreEqual(_logic.Player1.HealthPoints, hp);
-            Assert.AreEqual(_logic.Player2.HealthPoints, hp);
+            Assert.AreNotEqual(_logic.Player1.HealthPoints, hp);
+            Assert.AreNotEqual(_logic.Player2.HealthPoints, hp);
         }
 
         [Test]
@@ -47,10 +51,10 @@ namespace GameProcess.BL.Test
         {
             int hp = 100;
 
-            _logic.Player1.SetBlock(BodyParts._body);
-            _logic.Player2.SetBlock(BodyParts._body);
-            _logic.Player1.GetHit(BodyParts._body, 50);
-            _logic.Player2.GetHit(BodyParts._body, 50);
+            _logic.Player1.Block(BodyParts.Body);
+            _logic.Player2.Block(BodyParts.Body);
+            _logic.Player1.Hit(BodyParts.Body);
+            _logic.Player2.Hit(BodyParts.Body);
 
             Assert.AreEqual(_logic.Player1.HealthPoints, hp);
             Assert.AreEqual(_logic.Player2.HealthPoints, hp);
@@ -60,8 +64,11 @@ namespace GameProcess.BL.Test
         public void GenerateLogic_PersonDead()
         {
             int hp = 0;
-            _logic.Player1.GetHit(BodyParts._body, 110);
-            _logic.Player2.GetHit(BodyParts._body, 110);
+            for (int i = 0; i < 10; i++)
+            {
+                _logic.Player1.Hit(BodyParts.Body);
+                _logic.Player2.Hit(BodyParts.Body);
+            }
 
             Assert.AreEqual(_logic.Player1.HealthPoints, hp);
             Assert.AreEqual(_logic.Player2.HealthPoints, hp);
@@ -70,18 +77,15 @@ namespace GameProcess.BL.Test
         [Test]
         public void GenerateLogic_EventWound()
         {
-            string _name = null;
             int _hp = 0;
-            _logic.Player1.Wound += (object sender, EventArgsFighter a) =>
+            _logic.Player1.Wounded += (object sender, DamageEventArgs a) =>
             {
-                _hp = a.HP;
-                _name = a.Name;
+                _hp -= a.Damage;
             };
 
-            _logic.Player1.GetHit(BodyParts._body, 10);
+            _logic.Player1.Hit(BodyParts.Body);
 
             Assert.AreEqual(90, _hp);
-            Assert.AreEqual(_logic.Player1.Name, _name);
         }
 
         [Test]
@@ -89,13 +93,13 @@ namespace GameProcess.BL.Test
         {
             string _name = null;
             int _hp = 100;
-            _logic.Player1.Block += (object sender, EventArgsFighter a) =>
+            _logic.Player1.Blocked += (object sender, FighterEventArgs a) =>
             {
                 _name = a.Name;
             };
 
-            _logic.Player1.SetBlock(BodyParts._body);
-            _logic.Player1.GetHit(BodyParts._body, 10);
+            _logic.Player1.Block(BodyParts.Body);
+            _logic.Player1.Hit(BodyParts.Body);
 
             Assert.AreEqual(_hp, _logic.Player1.HealthPoints);
             Assert.AreEqual(_logic.Player1.Name, _name);
@@ -106,12 +110,12 @@ namespace GameProcess.BL.Test
         {
             string _name = null;
             int _hp = 0;
-            _logic.Player1.Death += (object sender, EventArgsFighter a) =>
+            _logic.Player1.Death += (object sender, FighterEventArgs a) =>
             {
                 _name = a.Name;
             };
 
-            _logic.Player1.GetHit(BodyParts._body, 110);
+            _logic.Player1.Hit(BodyParts.Body);
 
             Assert.AreEqual(_hp, _logic.Player1.HealthPoints);
             Assert.AreEqual(_logic.Player1.Name, _name);

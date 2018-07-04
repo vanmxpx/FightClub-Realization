@@ -11,6 +11,8 @@ using GameProcess.BL.Fighters;
 
 namespace FightingClub_Nikita.GameMenuItems
 {
+    // Этот контроллер не имеет никакой смысловой нагрузки, 
+    // просто что бы не загружать форму у него есть управляющий класс
     public class GameMenuController : IGameMenuForm
     {
         public GameMenuForm MenuForm { get; private set; }

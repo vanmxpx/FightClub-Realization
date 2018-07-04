@@ -45,6 +45,9 @@ namespace GameProcess.BL.Fighters
         protected BasePlayer(string name)
             : this(name, ConstantFields.BasicHp) { }
 
+        // Абстрактные методы реализуют наследники этого игрока, 
+        // что бы дургие игроки согли бить и блокировать по своему
+        // уже есть методы MakeHit и MakeBlock, но с их помощью только рассылаются уведомления.
         public abstract void Hit(BodyParts part);
         public abstract void Block(BodyParts part);
 
