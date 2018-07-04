@@ -7,7 +7,7 @@ using GameProcess.BL.Fighters;
 
 namespace FightingClub_Nikita.PlayerItems
 {
-    public class PlayerController
+    public class PlayerController: IPlayerView
     {
         public BodyParts SelectedPart { get; private set; } = BodyParts.None;
         public event EventHandler ProcessStep;

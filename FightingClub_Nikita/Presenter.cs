@@ -15,9 +15,9 @@ namespace FightingClub_Nikita
     {
         private IFighting _process;
     
-        private readonly GameMenuController _menu;
+        private readonly IGameMenuForm _menu;
 
-        List<PlayerController> _players = new List<PlayerController>();
+        List<IPlayerView> _players = new List<IPlayerView>();
         public Presenter(GameMenuController menu, IFighting _process)
         {
             this._process = _process;
